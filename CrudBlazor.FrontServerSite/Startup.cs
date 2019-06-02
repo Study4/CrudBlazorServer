@@ -9,11 +9,20 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CrudBlazor.FrontServerSite.Service;
+using Microsoft.Extensions.Configuration;
 
 namespace CrudBlazor.FrontServerSite
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -23,7 +32,7 @@ namespace CrudBlazor.FrontServerSite
 
             services.AddHttpClient("backendApi", c =>
             {
-                c.BaseAddress = new Uri("https://localhost:5001/");
+                c.BaseAddress = new Uri(Configuration["ApiUrl"]);
             });
 
             services.AddSingleton<EmployeesService>();
