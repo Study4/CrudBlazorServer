@@ -70,10 +70,7 @@ else
         try
         {
             var result = await _service.GetAsync();
-            if(result.Any())
-            {
-                emps = result.ToList();
-            }
+            emps = result.ToList();
         }
         catch(Exception ex)
         {
