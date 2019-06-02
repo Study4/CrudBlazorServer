@@ -1,0 +1,102 @@
+@using CrudBlazor.FrontServerSite.Models
+@using CrudBlazor.FrontServerSite.Service
+@using System.Linq;
+@page "/fetchdata"
+@inject EmployeesService _service
+@inject IJSRuntime JsRuntime
+
+<h1>Employee</h1>
+
+<form>
+    <div class="form-group row">
+        <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
+        <div class="col-sm-10">
+            <input bind="employee.FirstName" class="form-control"
+                   placeholder="FirstName" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
+        <div class="col-sm-10">
+            <input bind="employee.LastName" class="form-control"
+                   placeholder="LastName" />
+        </div>
+    </div>
+    <input type="button" value="Add" class="btn btn-primary" onclick="@Add" />
+    <input type="button" value="Update" class="btn btn-primary" onclick="@(()=>Update(employee.Id))" />
+</form>
+
+<br />
+
+@if (emps == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Control</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var emp in emps)
+            {
+                <tr>
+                    <td>@emp.Id</td>
+                    <td>@emp.FirstName</td>
+                    <td>@emp.LastName</td>
+                    <td>
+                        <input type="button" value="Edit" class="btn btn-primary" onclick="@(() => Edit(emp.Id))" />
+                        <input type="button" value="Del" class="btn btn-danger" onclick="@(()=> Del(emp.Id))" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@functions {
+    List<Employee> emps;
+    Employee employee = new Employee();
+
+
+    protected override async Task OnInitAsync()
+    {
+        emps = (await _service.GetAsync()).ToList();
+    }
+
+    async Task Add()
+    {
+        var returnEmp = await _service.Add(employee);
+        emps.Add(returnEmp);
+        await JsRuntime.InvokeAsync<string>(
+                "commonJsFunctions.alert",
+                "新增完成");
+    }
+
+    async Task Edit(int id)
+    {
+        employee = await _service.GetAsync(id);
+    }
+
+    async Task Update(int id)
+    {
+        await _service.Update(id, employee);
+        var index = emps.FindIndex(m => m.Id == id);
+        emps[index] = employee;
+    }
+
+    async Task Del(int id)
+    {
+        await _service.Del(id);
+        var index = emps.FindIndex(m => m.Id == id);
+        emps.RemoveAt(index);
+    }
+
+}
