@@ -4,6 +4,7 @@ metadata:
   name: frontend-service
 spec:
   ports:
+  - name: frontend-public-port
     port: 80
     targetPort: frontend-port
   type: LoadBalancer
