@@ -11,20 +11,21 @@
     <div class="form-group row">
         <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
         <div class="col-sm-10">
-            <input bind="employee.FirstName" class="form-control"
+            <input @bind="employee.FirstName" class="form-control"
                    placeholder="FirstName" />
         </div>
     </div>
     <div class="form-group row">
         <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
         <div class="col-sm-10">
-            <input bind="employee.LastName" class="form-control"
+            <input @bind="employee.LastName" class="form-control"
                    placeholder="LastName" />
         </div>
     </div>
-    <input type="button" value="Add" class="btn btn-primary" onclick="@Add" />
-    <input type="button" value="Update" class="btn btn-primary" onclick="@(()=>Update(employee.Id))" />
+    <input type="button" value="Add" class="btn btn-primary" @onclick="@Add" />
+    <input type="button" value="Update" class="btn btn-primary" @onclick="@(()=>Update(employee.Id))" />
 </form>
+
 
 <br />
 
@@ -51,8 +52,8 @@ else
                     <td>@emp.FirstName</td>
                     <td>@emp.LastName</td>
                     <td>
-                        <input type="button" value="Edit" class="btn btn-primary" onclick="@(() => Edit(emp.Id))" />
-                        <input type="button" value="Del" class="btn btn-danger" onclick="@(()=> Del(emp.Id))" />
+                        <input type="button" value="Edit" class="btn btn-primary" @onclick="@(() => Edit(emp.Id))" />
+                        <input type="button" value="Del" class="btn btn-danger" @onclick="@(()=> Del(emp.Id))" />
                     </td>
                 </tr>
             }
@@ -61,7 +62,7 @@ else
 }
 
 
-@functions {
+@code {
     List<Employee> emps;
     Employee employee = new Employee();
 
@@ -72,12 +73,12 @@ else
             var result = await _service.GetAsync();
             emps = result.ToList();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await JsRuntime.InvokeAsync<string>(
                 "commonJsFunctions.alert",
                 $"發生錯誤 : {ex}");
-        } 
+        }
     }
 
     async Task Add()
@@ -105,7 +106,7 @@ else
             employee = await _service.GetAsync(id);
         }
         catch (Exception ex)
-        {            
+        {
             await JsRuntime.InvokeAsync<string>(
                 "commonJsFunctions.alert",
                 $"發生錯誤 : {ex}");
