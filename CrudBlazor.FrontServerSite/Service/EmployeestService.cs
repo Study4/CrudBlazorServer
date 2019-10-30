@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Formatting;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CrudBlazor.FrontServerSite.Service
@@ -23,7 +24,8 @@ namespace CrudBlazor.FrontServerSite.Service
             var _httpClient = _clientFactory.CreateClient("backendApi");
             var result = await _httpClient.GetAsync("api/Employees/");
             result.EnsureSuccessStatusCode();
-            return await result.Content.ReadAsAsync<IEnumerable<Employee>>();
+            var obj = JsonSerializer.Deserialize<IEnumerable<Employee>>(await result.Content.ReadAsStringAsync());
+            return obj;
         }
 
         public async Task<Employee> GetAsync(int id)
@@ -31,23 +33,33 @@ namespace CrudBlazor.FrontServerSite.Service
             var _httpClient = _clientFactory.CreateClient("backendApi");
             var result = await _httpClient.GetAsync($"api/Employees/{id}");
             result.EnsureSuccessStatusCode();
-            return await result.Content.ReadAsAsync<Employee>();
+            var obj = JsonSerializer.Deserialize<Employee>(await result.Content.ReadAsStringAsync());
+            return obj;
         }
 
         public async Task<Employee> Add(Employee employee)
         {
             var _httpClient = _clientFactory.CreateClient("backendApi");
-            var result = await _httpClient
-                .PostAsync<Employee>($"api/Employees/", employee, new JsonMediaTypeFormatter());
+
+            var postContent = new StringContent(
+                JsonSerializer.Serialize(employee), Encoding.UTF8, "application/json");
+
+            var result = await _httpClient.PostAsync($"api/Employees/", postContent);
             result.EnsureSuccessStatusCode();
-            return await result.Content.ReadAsAsync<Employee>();
+            var obj = JsonSerializer.Deserialize<Employee>(await result.Content.ReadAsStringAsync());
+            return obj;
         }
 
         public async Task<bool> Update(int id, Employee employee)
         {
+            
             var _httpClient = _clientFactory.CreateClient("backendApi");
+
+            var putContent = new StringContent(
+              JsonSerializer.Serialize(employee), Encoding.UTF8, "application/json");
+
             var result = await _httpClient
-                .PutAsync<Employee>($"api/Employees/{id}", employee, new JsonMediaTypeFormatter());
+                .PutAsync($"api/Employees/{id}", putContent);
             result.EnsureSuccessStatusCode();
             return true;
         }

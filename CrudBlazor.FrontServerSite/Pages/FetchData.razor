@@ -7,24 +7,24 @@
 
 <h1>Employee</h1>
 
-<form>
+<EditForm Model="@employee" Context="formContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <div class="form-group row">
         <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
         <div class="col-sm-10">
-            <input @bind="employee.FirstName" class="form-control"
-                   placeholder="FirstName" />
+            <InputText class="form-control" @bind-Value="employee.FirstName" placeholder="FirstName" />
         </div>
     </div>
     <div class="form-group row">
         <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
         <div class="col-sm-10">
-            <input @bind="employee.LastName" class="form-control"
-                   placeholder="LastName" />
+            <InputText class="form-control" @bind-Value="employee.LastName" placeholder="LastName" />
         </div>
     </div>
-    <input type="button" value="Add" class="btn btn-primary" @onclick="@Add" />
-    <input type="button" value="Update" class="btn btn-primary" @onclick="@(()=>Update(employee.Id))" />
-</form>
+    <input type="submit" value="Add" class="btn btn-primary" @onclick="@(() => Add(formContext))" />
+    <input type="submit" value="Update" class="btn btn-primary" @onclick="(()=>Update(employee.Id))" />
+</EditForm>
 
 
 <br />
@@ -52,8 +52,8 @@ else
                     <td>@emp.FirstName</td>
                     <td>@emp.LastName</td>
                     <td>
-                        <input type="button" value="Edit" class="btn btn-primary" @onclick="@(() => Edit(emp.Id))" />
-                        <input type="button" value="Del" class="btn btn-danger" @onclick="@(()=> Del(emp.Id))" />
+                        <input type="button" value="Edit" class="btn btn-primary" @onclick="(() => Edit(emp.Id))" />
+                        <input type="button" value="Del" class="btn btn-danger" @onclick="(()=> Del(emp.Id))" />
                     </td>
                 </tr>
             }
@@ -66,7 +66,7 @@ else
     List<Employee> emps;
     Employee employee = new Employee();
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
@@ -81,8 +81,13 @@ else
         }
     }
 
-    async Task Add()
+    async Task Add(EditContext editContext)
     {
+        if(editContext.Validate() == false)
+        {
+            return;
+        }
+
         try
         {
             var returnEmp = await _service.Add(employee);
