@@ -3,6 +3,7 @@ CRUD Front-End use BlazorServer mode
 
 ## 目標
 
+- .NET Core 3.0
 - ASP.NET Core Blazor ( BlazorServer mode ) CRUD Sample
     - Docker Support ( Dockerfile )
 - Support gPRC , this call [CrudGrpcAspNetCore](https://github.com/Study4/CrudGrpcAspNetCore) , need this project
