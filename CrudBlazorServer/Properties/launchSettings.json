@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "CrudBlazor.FrontServerSite": {
+    "CrudBlazorServer": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

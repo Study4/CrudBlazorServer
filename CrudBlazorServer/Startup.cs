@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CrudBlazor.FrontServerSite.Service;
+using CrudBlazorServer.Service;
 using Microsoft.Extensions.Configuration;
+using Employee;
 
-namespace CrudBlazor.FrontServerSite
+namespace CrudBlazorServer
 {
     public class Startup
     {
@@ -34,6 +35,10 @@ namespace CrudBlazor.FrontServerSite
             services.AddHttpClient("backendApi", c =>
             {
                 c.BaseAddress = new Uri(Configuration["ApiUrl"]);
+            });
+            services.AddGrpcClient<EmployeeManage.EmployeeManageClient>(o =>
+            {
+                o.Address = new Uri("https://localhost:5001");
             });
 
             // Service

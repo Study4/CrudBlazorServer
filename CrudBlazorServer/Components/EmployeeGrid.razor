@@ -1,0 +1,61 @@
+﻿@if (Emps == null)
+{
+    <p><em>@ChildContent</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Control</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var emp in Emps)
+            {
+                <tr>
+                    <td>@emp.Id</td>
+                    <td>@emp.FirstName</td>
+                    <td>@emp.LastName</td>
+                    <td>
+                        <input type="button" value="Edit" class="btn btn-primary" @onclick="(() => Edit(emp.Id))" />
+                        <input type="button" value="Del" class="btn btn-danger" @onclick="(()=> Del(emp.Id))" />
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+
+@code {
+
+    [Parameter]
+    public List<Models.Employee> Emps { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+
+
+
+    async Task Edit(int id)
+    {
+        await OnEdit.InvokeAsync(id);
+    }
+
+    async Task Del(int id)
+    {
+        await OnDelete.InvokeAsync(id);
+    }
+
+}
